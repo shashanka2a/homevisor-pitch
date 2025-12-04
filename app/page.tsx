@@ -1,32 +1,55 @@
-import React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+'use client'
+
+import { useState, useEffect, useCallback, createContext, useContext } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ChevronRight, 
   ChevronLeft, 
   Home, 
-  ShieldCheck, 
   Activity, 
-  Clock, 
   Users, 
   DollarSign, 
-  PieChart, 
   Layers, 
-  ArrowRight,
   CheckCircle2,
   XCircle,
   TrendingUp,
   AlertCircle,
   Sun,
   Moon
-} from 'lucide-react';
+} from 'lucide-react'
 
 // --- Theme Context ---
-const ThemeContext = createContext({ isDark: true });
+const ThemeContext = createContext<{ isDark: boolean }>({ isDark: true })
 
-const useTheme = () => useContext(ThemeContext);
+const useTheme = () => useContext(ThemeContext)
+
+// --- Types ---
+type Slide = {
+  id: string
+  layout: string
+  title: string
+  subtitle?: string
+  content?: string
+  headline?: string
+  description?: string
+  tags?: string[]
+  points?: string[]
+  highlight?: string
+  comparison?: {
+    left: { label: string; items: string[] }
+    right: { label: string; items: string[] }
+  }
+  stat?: string
+  statLabel?: string
+  columns?: Array<{ icon: React.ComponentType<{ size?: number; strokeWidth?: number }>; title: string; text: string }>
+  features?: string[]
+  table?: Array<{ feature: string; legacy: string; hv: string }>
+  steps?: Array<{ time: string; title: string; desc: string }>
+  isCTA?: boolean
+}
 
 // --- Data: Slide Content ---
-const slides = [
+const slides: Slide[] = [
   {
     id: 'hero',
     layout: 'hero',
@@ -143,12 +166,12 @@ const slides = [
     content: "We're assembling the first managed homeownership platform. Join the list to help shape the product.",
     isCTA: true
   }
-];
+]
 
 // --- Components ---
 
-const Button = ({ children, primary = false, className = "" }) => {
-  const { isDark } = useTheme();
+const Button = ({ children, primary = false, className = "" }: { children: React.ReactNode, primary?: boolean, className?: string }) => {
+  const { isDark } = useTheme()
   return (
     <button className={`
       relative px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 group overflow-hidden
@@ -162,11 +185,11 @@ const Button = ({ children, primary = false, className = "" }) => {
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
       )}
     </button>
-  );
-};
+  )
+}
 
-const Badge = ({ text }) => {
-  const { isDark } = useTheme();
+const Badge = ({ text }: { text: string }) => {
+  const { isDark } = useTheme()
   return (
     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
       isDark 
@@ -175,13 +198,13 @@ const Badge = ({ text }) => {
     }`}>
       {text}
     </span>
-  );
-};
+  )
+}
 
 // --- Slide Layouts ---
 
-const HeroLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const HeroLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-8 relative z-10">
       <motion.div 
@@ -246,11 +269,11 @@ const HeroLayout = ({ slide }) => {
          </motion.div>
       )}
     </div>
-  );
-};
+  )
+}
 
-const SplitLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const SplitLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 h-full items-center px-12">
       <div>
@@ -264,7 +287,7 @@ const SplitLayout = ({ slide }) => {
           : "bg-white/50 border-zinc-200 shadow-xl shadow-purple-900/5"
       }`}>
         <ul className="space-y-4">
-          {slide.points.map((point, i) => (
+          {slide.points?.map((point, i) => (
             <motion.li 
               key={i}
               initial={{ opacity: 0, x: 20 }}
@@ -279,11 +302,11 @@ const SplitLayout = ({ slide }) => {
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}
 
-const GridProblemLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const GridProblemLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="h-full flex flex-col justify-center px-12">
       <div className="text-center mb-12">
@@ -298,9 +321,9 @@ const GridProblemLayout = ({ slide }) => {
           isDark ? "bg-zinc-900 border-zinc-800" : "bg-white border-zinc-200 shadow-sm"
         }`}>
           <div className="absolute top-0 left-0 w-1 h-full bg-red-500/50" />
-          <h4 className={`text-xl font-semibold mb-6 ${isDark ? "text-zinc-300" : "text-zinc-800"}`}>{slide.comparison.left.label}</h4>
+          <h4 className={`text-xl font-semibold mb-6 ${isDark ? "text-zinc-300" : "text-zinc-800"}`}>{slide.comparison?.left.label}</h4>
           <ul className="space-y-4">
-            {slide.comparison.left.items.map((item, i) => (
+            {slide.comparison?.left.items.map((item, i) => (
                <li key={i} className={`flex items-center gap-3 ${isDark ? "text-zinc-500" : "text-zinc-600"}`}>
                  <XCircle className="w-5 h-5 text-red-500/70" />
                  {item}
@@ -317,9 +340,9 @@ const GridProblemLayout = ({ slide }) => {
            <div className={`absolute -right-20 -top-20 w-64 h-64 rounded-full blur-3xl pointer-events-none ${
              isDark ? "bg-purple-500/10" : "bg-purple-500/5"
            }`} />
-           <h4 className={`text-xl font-semibold mb-6 ${isDark ? "text-white" : "text-zinc-900"}`}>{slide.comparison.right.label}</h4>
+           <h4 className={`text-xl font-semibold mb-6 ${isDark ? "text-white" : "text-zinc-900"}`}>{slide.comparison?.right.label}</h4>
            <ul className="space-y-4">
-            {slide.comparison.right.items.map((item, i) => (
+            {slide.comparison?.right.items.map((item, i) => (
                <li key={i} className={`flex items-center gap-3 ${isDark ? "text-zinc-200" : "text-zinc-700"}`}>
                  <CheckCircle2 className={`w-5 h-5 ${isDark ? "text-purple-400" : "text-purple-600"}`} />
                  {item}
@@ -329,11 +352,11 @@ const GridProblemLayout = ({ slide }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-const Columns3Layout = ({ slide }) => {
-  const { isDark } = useTheme();
+const Columns3Layout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="h-full flex flex-col justify-center px-12">
       <div className="text-center mb-16">
@@ -342,7 +365,7 @@ const Columns3Layout = ({ slide }) => {
          <p className={`max-w-2xl mx-auto ${isDark ? "text-zinc-500" : "text-zinc-600"}`}>{slide.description}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {slide.columns.map((col, i) => (
+        {slide.columns?.map((col, i) => (
           <motion.div 
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -365,11 +388,11 @@ const Columns3Layout = ({ slide }) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-const ComparisonTableLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const ComparisonTableLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="h-full flex flex-col justify-center px-12 max-w-5xl mx-auto w-full">
       <h2 className={`text-3xl font-bold mb-2 text-center ${isDark ? "text-white" : "text-zinc-900"}`}>{slide.title}</h2>
@@ -385,7 +408,7 @@ const ComparisonTableLayout = ({ slide }) => {
           <div>Legacy Platforms</div>
           <div className={`${isDark ? "text-purple-400" : "text-purple-600"}`}>HomeVisor</div>
         </div>
-        {slide.table.map((row, i) => (
+        {slide.table?.map((row, i) => (
           <div key={i} className={`grid grid-cols-3 p-6 border-b last:border-0 transition-colors items-center ${
             isDark 
               ? "border-zinc-800/50 hover:bg-zinc-800/30" 
@@ -401,11 +424,11 @@ const ComparisonTableLayout = ({ slide }) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-const VisualDashboardLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const VisualDashboardLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="h-full flex flex-col md:flex-row items-center gap-12 px-12">
       <div className="flex-1">
@@ -413,7 +436,7 @@ const VisualDashboardLayout = ({ slide }) => {
         <h3 className={`text-xl mb-6 ${isDark ? "text-purple-400" : "text-purple-600"}`}>{slide.headline}</h3>
         <p className={`text-lg mb-8 ${isDark ? "text-zinc-500" : "text-zinc-600"}`}>{slide.content}</p>
         <ul className="space-y-3">
-          {slide.features.map((feat, i) => (
+          {slide.features?.map((feat, i) => (
             <li key={i} className={`flex items-center gap-3 ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
                 isDark 
@@ -486,11 +509,11 @@ const VisualDashboardLayout = ({ slide }) => {
         }`} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-const TimelineLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const TimelineLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="h-full flex flex-col justify-center px-12">
       <h2 className={`text-4xl font-bold mb-16 text-center ${isDark ? "text-white" : "text-zinc-900"}`}>{slide.title}</h2>
@@ -502,7 +525,7 @@ const TimelineLayout = ({ slide }) => {
         }`} />
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {slide.steps.map((step, i) => (
+          {slide.steps?.map((step, i) => (
             <motion.div 
               key={i}
               initial={{ opacity: 0, y: 20 }}
@@ -526,11 +549,11 @@ const TimelineLayout = ({ slide }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-const DefaultLayout = ({ slide }) => {
-  const { isDark } = useTheme();
+const DefaultLayout = ({ slide }: { slide: Slide }) => {
+  const { isDark } = useTheme()
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-8">
       <h2 className={`text-5xl font-bold mb-6 ${isDark ? "text-white" : "text-zinc-900"}`}>{slide.title}</h2>
@@ -545,48 +568,48 @@ const DefaultLayout = ({ slide }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 // --- Main App Component ---
 
 export default function HomeVisorDeck() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isDark, setIsDark] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isDark, setIsDark] = useState(true)
 
-  const toggleTheme = () => setIsDark(!isDark);
+  const toggleTheme = () => setIsDark(!isDark)
 
   const nextSlide = useCallback(() => {
-    setCurrentSlide(curr => (curr + 1) % slides.length);
-  }, []);
+    setCurrentSlide(curr => (curr + 1) % slides.length)
+  }, [])
 
   const prevSlide = useCallback(() => {
-    setCurrentSlide(curr => (curr - 1 + slides.length) % slides.length);
-  }, []);
+    setCurrentSlide(curr => (curr - 1 + slides.length) % slides.length)
+  }, [])
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowRight') nextSlide();
-      if (e.key === 'ArrowLeft') prevSlide();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextSlide, prevSlide]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') nextSlide()
+      if (e.key === 'ArrowLeft') prevSlide()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [nextSlide, prevSlide])
 
   const SlideComponent = () => {
-    const slide = slides[currentSlide];
+    const slide = slides[currentSlide]
     switch (slide.layout) {
-      case 'hero': return <HeroLayout slide={slide} />;
-      case 'split': return <SplitLayout slide={slide} />;
-      case 'grid-problem': return <GridProblemLayout slide={slide} />;
-      case 'columns-3': return <Columns3Layout slide={slide} />;
-      case 'visual-dashboard': return <VisualDashboardLayout slide={slide} />;
-      case 'comparison-table': return <ComparisonTableLayout slide={slide} />;
-      case 'timeline': return <TimelineLayout slide={slide} />;
-      case 'split-graphic': return <VisualDashboardLayout slide={{...slide, features: slide.points, content: slide.description}} />;
-      default: return <DefaultLayout slide={slide} />;
+      case 'hero': return <HeroLayout slide={slide} />
+      case 'split': return <SplitLayout slide={slide} />
+      case 'grid-problem': return <GridProblemLayout slide={slide} />
+      case 'columns-3': return <Columns3Layout slide={slide} />
+      case 'visual-dashboard': return <VisualDashboardLayout slide={slide} />
+      case 'comparison-table': return <ComparisonTableLayout slide={slide} />
+      case 'timeline': return <TimelineLayout slide={slide} />
+      case 'split-graphic': return <VisualDashboardLayout slide={{...slide, features: slide.points, content: slide.description}} />
+      default: return <DefaultLayout slide={slide} />
     }
-  };
+  }
 
   return (
     <ThemeContext.Provider value={{ isDark }}>
@@ -700,5 +723,6 @@ export default function HomeVisorDeck() {
 
       </div>
     </ThemeContext.Provider>
-  );
+  )
 }
+
