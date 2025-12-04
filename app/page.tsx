@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 
 // --- Theme Context ---
-const ThemeContext = createContext<{ isDark: boolean }>({ isDark: true })
+const ThemeContext = createContext<{ isDark: boolean }>({ isDark: false })
 
 const useTheme = () => useContext(ThemeContext)
 
@@ -575,7 +575,7 @@ const DefaultLayout = ({ slide }: { slide: Slide }) => {
 
 export default function HomeVisorDeck() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isDark, setIsDark] = useState(true)
+  const [isDark, setIsDark] = useState(false)
 
   const toggleTheme = () => setIsDark(!isDark)
 
