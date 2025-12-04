@@ -69,3 +69,4 @@ The app includes comprehensive SEO meta tags:
 
 MIT
 
+
